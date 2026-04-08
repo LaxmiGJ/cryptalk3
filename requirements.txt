@@ -1,0 +1,8 @@
+streamlit
+requests
+fastapi
+uvicorn
+cryptography
+deep-translator
+transformers
+torch
