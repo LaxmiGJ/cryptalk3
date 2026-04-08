@@ -4,7 +4,12 @@ import zlib
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from deep_translator import GoogleTranslator
 
-BACKEND_GET_URL = "https://<YOUR-BACKEND-URL>/get"
+BACKEND_GET_URL = "https://laxmigj-cryptalk-backend.hf.space/get"
+
+
+def backend_url_is_set(url):
+    return "<YOUR-BACKEND-URL>" not in url and url.startswith("https://")
+
 
 st.set_page_config(page_title="CrypTalk Receiver", page_icon="📥", layout="centered")
 st.title("📥 CrypTalk Receiver")
@@ -39,12 +44,15 @@ def decompress(data):
 
 
 if st.button("🔄 Fetch Latest Message"):
-    with st.spinner("Fetching secure message..."):
-        try:
-            response = requests.get(BACKEND_GET_URL, timeout=15)
-        except requests.RequestException as error:
-            st.error(f"Request failed: {error}")
-            st.stop()
+    if not backend_url_is_set(BACKEND_GET_URL):
+        st.error("Backend URL is not configured. Replace BACKEND_GET_URL in receiver_app.py with your deployed backend URL.")
+    else:
+        with st.spinner("Fetching secure message..."):
+            try:
+                response = requests.get(BACKEND_GET_URL, timeout=15)
+            except requests.RequestException as error:
+                st.error(f"Request failed: {error}")
+                st.stop()
 
         if response.status_code != 200:
             st.error("No secure message available yet.")

@@ -7,7 +7,12 @@ import time
 import requests
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-BACKEND_SEND_URL = "https://<YOUR-BACKEND-URL>/send"
+BACKEND_SEND_URL = "https://laxmigj-cryptalk-backend.hf.space/send"
+
+
+def backend_url_is_set(url):
+    return "<YOUR-BACKEND-URL>" not in url and url.startswith("https://")
+
 
 st.set_page_config(page_title="CrypTalk Sender", page_icon="📤", layout="centered")
 st.title("📤 CrypTalk Sender")
@@ -68,7 +73,9 @@ def load_models():
 emotion_classifier = load_models()
 
 if send:
-    if not sender_name.strip() or not receiver_name.strip() or not user_text.strip():
+    if not backend_url_is_set(BACKEND_SEND_URL):
+        st.error("Backend URL is not configured. Replace BACKEND_SEND_URL in sender_app.py with your deployed backend URL.")
+    elif not sender_name.strip() or not receiver_name.strip() or not user_text.strip():
         st.warning("Please enter sender, receiver, and a message.")
     else:
         with st.spinner("Processing secure message..."):
